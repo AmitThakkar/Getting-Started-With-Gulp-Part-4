@@ -92,10 +92,11 @@ gulp.task('install', function () {
 });
 
 gulp.task('build', function (callback) {
-    runSequence(['install', 'lint'],
-        ['scripts'],
-        'watch',
-        'nodejs',
+    runSequence(
+        'install',
+        'lint',
+        'scripts',
+        ['watch', 'nodejs'],
         'open',
         callback);
 });
