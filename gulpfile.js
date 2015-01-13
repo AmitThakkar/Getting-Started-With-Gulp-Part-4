@@ -9,7 +9,8 @@ var gulp = require('gulp'),
     jshint = require('gulp-jshint'),
     open = require("gulp-open"),
     install = require("gulp-install"),
-    notify = require("gulp-notify");
+    notify = require("gulp-notify"),
+    runSequence = require('run-sequence');
 
 function errorLog(error) {
     console.error(error);
@@ -81,8 +82,22 @@ gulp.task('open', function () {
 
 // Gulp install
 gulp.task('install', function () {
-    gulp.src(['./package.json'])
-        .pipe(install());
+    return gulp.src(['./package.json'])
+        .pipe(install())
+        .pipe(notify({
+            title: projectName,
+            message: 'npm install is running.',
+            sound: sound
+        }));
 });
 
-gulp.task('default', ['install', 'scripts', 'watch', 'lint', 'nodejs', 'open']);
+gulp.task('build', function (callback) {
+    runSequence(['install', 'lint'],
+        ['scripts'],
+        'watch',
+        'nodejs',
+        'open',
+        callback);
+});
+
+gulp.task('default', ['build']);
