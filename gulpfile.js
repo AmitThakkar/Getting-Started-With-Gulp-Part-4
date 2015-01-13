@@ -7,12 +7,17 @@ var gulp = require('gulp'),
     livereload = require('gulp-livereload'), // Requiring gulp-livereload task.
     nodemon = require('gulp-nodemon'),
     jshint = require('gulp-jshint'),
-    open = require("gulp-open");
+    open = require("gulp-open"),
+    install = require("gulp-install"),
+    notify = require("gulp-notify");
 
 function errorLog(error) {
     console.error(error);
     this.emit('end');
 }
+
+var projectName = "My Project",
+    sound = "Frog";
 
 // Scripts Task
 // Uglify
@@ -22,14 +27,24 @@ gulp.task('scripts', function () {
         .on('error', errorLog)
         .pipe(concat('all.js')) // Adding concat task here
         .pipe(gulp.dest('build/scripts'))
-        .pipe(livereload()); // Adding livereload task here. Which creates a livereload server.
+        .pipe(livereload()) // Adding livereload task here. Which creates a livereload server.
+        .pipe(notify({
+            title: projectName,
+            message: 'Executed scripts task',
+            sound: sound
+        }));
 });
 
 // HTMLs Task
 // Uglify
 gulp.task('htmls', function () {
     gulp.src('public/*html')
-        .pipe(livereload());
+        .pipe(livereload())
+        .pipe(notify({
+            title: projectName,
+            message: 'Executed htmls task',
+            sound: sound
+        }));
 });
 
 // Watch Task
@@ -64,4 +79,10 @@ gulp.task('open', function () {
         .pipe(open("", options));
 });
 
-gulp.task('default', ['scripts', 'watch', 'lint', 'nodejs', 'open']);
+// Gulp install
+gulp.task('install', function () {
+    gulp.src(['./package.json'])
+        .pipe(install());
+});
+
+gulp.task('default', ['install', 'scripts', 'watch', 'lint', 'nodejs', 'open']);
